@@ -11,6 +11,18 @@ import glob
 import json
 from janome.tokenizer import Tokenizer # for japanese
 
+##### MAIN ######
+def main():
+    try:
+        tello = Tello()
+        flying = 0
+        while True:
+            print("START RECOGNIZING!")
+            VRcommand = recognize_speech_from_mic(recognizer, microphone)
+            print("You said: {}".format(VRcommand["transcription"]))
+            print("API returns: {}".format(VRcommand["error"]))
+    except SystemExit as e:
+        print('exception = "%s"' % e)
 
 def recognize_speech_from_mic(recognizer, microphone):
     """Transcribe speech from recorded from `microphone`.
@@ -174,3 +186,7 @@ while True:
 
         w.write("\n")
 exit()
+
+###### ENTRY POINT ######
+if __name__ == "__main__":
+    main()
