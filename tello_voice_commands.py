@@ -24,7 +24,7 @@ log = False
 wait_for_shift = True
 lang = None
 lang_data = None
-commands_activate = ["tello", "robot", "テロ", "ロボット", "鉄人", "てつじん", "テツジン"]
+commands_activate = ["tello", "robot", "テロー", "ロボット", "鉄人", "てつじん", "テツジン"]
 vc = None
 languages = []
 
