@@ -21,6 +21,30 @@ def main():
             VRcommand = recognize_speech_from_mic(recognizer, microphone)
             print("You said: {}".format(VRcommand["transcription"]))
             print("API returns: {}".format(VRcommand["error"]))
+
+            i = 0
+            tempCom = VRcommand["transcription"]
+            com_list = tmpCom.split()
+            commnad = ""
+
+            for word in (com_list):
+                if(com_list[i] == "飛べ" and flying = 1):
+                    print("Flying!")
+                    i=i+1
+                elif(com_list[i] == "着陸" and flying = 1):
+                    command += "land"
+                    flying = 0
+                    i=i+1
+                    break
+                elif((com_list[i] =! "飛べ" or com_list[i] =! "着陸") and flying = 1):
+                    if(com_list[i] == "前" or com_list[i] == "前方" or com_list[i] == "まえ"):
+                        command += "forward 100"
+                        i=i+1
+                    elif(com_list[i] == "後ろ" or com_list[i] == "後方" or com_list[i] == "うしろ"):
+                        command += "back 100"
+                        i=i+1
+                    
+
     except SystemExit as e:
         print('exception = "%s"' % e)
 
