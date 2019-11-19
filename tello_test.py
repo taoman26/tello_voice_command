@@ -13,18 +13,21 @@ from janome.tokenizer import Tokenizer # for japanese
 
 ##### MAIN ######
 def main():
+    tello = Tello()
+    # create recognizer and mic instances
+    sample_rate = 96000
+    recognizer = sr.Recognizer()
+    microphone = sr.Microphone(device_index=0)
+    #recognizer.energy_threshold = 4000
     try:
-        tello = Tello()
         flying = 0
         while True:
             print("START RECOGNIZING!")
             VRcommand = recognize_speech_from_mic(recognizer, microphone)
-            print("You said: {}".format(VRcommand["transcription"]))
             print("API returns: {}".format(VRcommand["error"]))
 
             i = 0
-            tempCom = VRcommand["transcription"]
-            com_list = tmpCom.split()
+            com_list = VRcommand["transcription"]
             commnad = ""
 
             for word in (com_list):
@@ -89,6 +92,7 @@ def main():
     except SystemExit as e:
         print('exception = "%s"' % e)
 
+##### RECOGNIZE ######
 def recognize_speech_from_mic(recognizer, microphone):
     """Transcribe speech from recorded from `microphone`.
     Returns a dictionary with three keys:
@@ -110,40 +114,40 @@ def recognize_speech_from_mic(recognizer, microphone):
     # adjust the recognizer sensitivity to ambient noise and record audio
     # from the microphone
     with microphone as source:
-        recognizer.adjust_for_ambient_noise(source,duration=0.5)
-        audio = recognizer.listen(source)
+        recognizer.pause_threshold = 0.8
+        recognizer.dynamic_energy_threshold = False
+        recognizer.adjust_for_ambient_noise(source)
+        recognized = None
 
-    # set up the response object
-    response = {
-        "success": True,
-        "error": None,
-        "transcription": None
-    }
+        '''LISTINING'''
+        try:
+            audio = recognizer.listen(source, timeout = 5)
+        except sr.WaitTimeoutError:
+            print("Timeout...")
+            return
+        
+        # set up the response object
+        response = {
+            "success": True,
+            "error": None,
+            "transcription": None
+        }
 
-    # try recognizing the speech in the recording
-    # if a RequestError or UnknownValueError exception is caught,
-    #     update the response object accordingly
-    try:
-        response["transcription"] = recognizer.recognize_google(audio)
-    except sr.RequestError:
-        # API was unreachable or unresponsive
-        response["success"] = False
-        response["error"] = "API unavailable"
-    except sr.UnknownValueError:
-        # speech was unintelligible
-        response["error"] = "Unable to recognize speech"
-
-    return response
-
-# create recognizer and mic instances
-sample_rate = 96000
-recognizer = sr.Recognizer()
-microphone = sr.Microphone()
-#recognizer.energy_threshold = 4000
-
-#Used to Initiliaze Voice Recognition
-int_breaker = 0
-
+        # RECOGNIZING
+        try:
+            recognized = recognizer.recognize_google(audio, key=None, language='ja')
+            print("You said: " + recognized)
+            # WAKATI
+            t = Tokenizer(wakati=True)
+            response["transcription"] = t.tokenize(recognized)
+        except sr.RequestError:
+            # API was unreachable or unresponsive
+            response["success"] = False
+            response["error"] = "API unavailable"
+        except sr.UnknownValueError:
+            # speech was unintelligible
+            response["error"] = "Unable to recognize speech"
+        return response
 
 ###### ENTRY POINT ######
 if __name__ == "__main__":
