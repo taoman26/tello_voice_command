@@ -1,13 +1,9 @@
 from tello import Tello
 import sys
-from datetime import datetime
 import time
-import random
 import os
 import speech_recognition as sr
 import asyncio
-import operator
-import glob
 import json
 from janome.tokenizer import Tokenizer # for japanese
 
@@ -28,43 +24,52 @@ def main():
 
             i = 0
             com_list = VRcommand["transcription"]
-            commnad = ""
+            command = ""
 
             for word in (com_list):
                 if(com_list[i] == "飛べ" and flying == 1):
-                    print("Flying!")
+                    print("Already Flying!")
                     i=i+1
                 elif(com_list[i] == "着陸" and flying == 1):
+                    # print("Action command recognized: land")
                     command += "land"
                     flying = 0
                     i=i+1
                     break
                 elif((com_list[i] != "飛べ" or com_list[i] != "着陸") and flying == 1):
                     if(com_list[i] == "前" or com_list[i] == "前方" or com_list[i] == "まえ"):
+                        # print("Action command recognized: forward")
                         command += "forward 100"
                         i=i+1
                     elif(com_list[i] == "後ろ" or com_list[i] == "後方" or com_list[i] == "うしろ"):
+                        # print("Action command recognized: back")
                         command += "back 100"
                         i=i+1
                     elif(com_list[i] == "左" or com_list[i] == "ひだり"):
+                        # print("Action command recognized: left")
                         command += "left 100"
                         i=i+1
                     elif(com_list[i] == "右" or com_list[i] == "みぎ"):
+                        # print("Action command recognized: right")
                         command += "right 100"
                         i=i+1
                     elif(com_list[i] == "上" or com_list[i] == "上方" or com_list[i] == "上昇" or com_list[i] == "うえ"):
+                        # print("Action command recognized: up")
                         command += "up 100"
                         i=i+1
                     elif(com_list[i] == "下" or com_list[i] == "下方" or com_list[i] == "下降" or com_list[i] == "した"):
+                        # print("Action command recognized: down")
                         command += "down 100"
                         i=i+1
                     elif(com_list[i] == "旋回" or com_list[i] == "せんかい"):
+                        # print("Action command recognized: flip")
                         command += "flip r"
                         i=i+1
                     else:
                         print("Incorrect Command")
                         i=i+1
                 elif(com_list[i] == "飛べ" and flying == 0):
+                    # print("Action command recognized: takeoff")
                     command += "takeoff"
                     flying = 1
                     i=i+1
@@ -72,9 +77,9 @@ def main():
                     print("Not flying!")
                     i=i+1
                 else:
-                    print("Debug="+flying)
-                    print("command="+com_list[i])
-                    command += "land"
+                    print("Debug= "+flying)
+                    print("Debug Command = "+com_list[i])
+                    command += "land" # emergency landing
                     flying = 0
                     i=i+1
 
