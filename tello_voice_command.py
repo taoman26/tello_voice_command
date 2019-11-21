@@ -77,7 +77,7 @@ def main():
                     flying = 1
                     i=i+1
                 elif(flying == 0):
-                    print("Not flying!")
+                    # print("Not flying!")
                     i=i+1
                 else:
                     print("Debug= "+flying)
@@ -93,6 +93,8 @@ def main():
             if(command != "land" and command != ""):
                 print("command = %s" % command)
                 tello.send_command(command)
+            if(flying == 0):
+                print("Not flying!")
             else:
                 print("command not registered")
         exit()
