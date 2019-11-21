@@ -71,7 +71,7 @@ def main():
                     else:
                         print("Incorrect Command")
                         i=i+1
-                elif(com_list[i] == "飛べ" and flying == 0):
+                elif(com_list[i] == "戸部" and flying == 0):
                     # print("Action command recognized: takeoff")
                     command += "takeoff"
                     flying = 1
@@ -93,7 +93,7 @@ def main():
             if(command != "land" and command != ""):
                 print("command = %s" % command)
                 tello.send_command(command)
-            if(flying == 0):
+            elif(flying == 0):
                 print("Not flying!")
             else:
                 print("command not registered")
@@ -124,7 +124,7 @@ def recognize_speech_from_mic(recognizer, microphone):
     # adjust the recognizer sensitivity to ambient noise and record audio
     # from the microphone
     with microphone as source:
-        recognizer.pause_threshold = 0.8
+        recognizer.pause_threshold = 0.5
         recognizer.dynamic_energy_threshold = False
         recognizer.adjust_for_ambient_noise(source)
         recognized = None
@@ -145,7 +145,7 @@ def recognize_speech_from_mic(recognizer, microphone):
 
         # RECOGNIZING
         try:
-            audio = recognizer.listen(source, timeout = 5)
+            audio = recognizer.listen(source, timeout = 3)
             recognized = recognizer.recognize_google(audio, key=None, language='ja')
             print("You said: " + recognized)
             # WAKATI
