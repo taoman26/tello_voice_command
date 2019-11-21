@@ -30,7 +30,7 @@ def main():
             command = ""
 
             for word in (com_list):
-                if(com_list[i] == "飛べ" and flying == 1):
+                if((com_list[i] == "飛べ" or com_list[i] == "戸部" or com_list[i] == "とべ" or com_list[i] == "トベ") and flying == 1):
                     print("Already Flying!")
                     i=i+1
                 elif(com_list[i] == "着陸" and flying == 1):
@@ -39,7 +39,7 @@ def main():
                     flying = 0
                     i=i+1
                     break
-                elif((com_list[i] != "飛べ" or com_list[i] != "着陸") and flying == 1):
+                elif((com_list[i] != "飛べ" or com_list[i] != "戸部" or com_list[i] != "とべ" or com_list[i] != "トベ" or com_list[i] != "着陸") and flying == 1):
                     if(com_list[i] == "前" or com_list[i] == "前方" or com_list[i] == "まえ"):
                         # print("Action command recognized: forward")
                         command += "forward 100"
@@ -71,7 +71,7 @@ def main():
                     else:
                         print("Incorrect Command")
                         i=i+1
-                elif(com_list[i] == "戸部" and flying == 0):
+                elif((com_list[i] == "飛べ" or com_list[i] == "戸部" or com_list[i] == "とべ" or com_list[i] == "トベ") and flying == 0):
                     # print("Action command recognized: takeoff")
                     command += "takeoff"
                     flying = 1
