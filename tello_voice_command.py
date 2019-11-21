@@ -20,7 +20,10 @@ def main():
         while True:
             print("START RECOGNIZING!")
             VRcommand = recognize_speech_from_mic(recognizer, microphone)
+            print(VRcommand["transcription"])
             print("API returns: {}".format(VRcommand["error"]))
+            if(VRcommand["transcription"] == None):
+                VRcommand["transcription"] = ["着陸"] # If not recognized, land your Drone
 
             i = 0
             com_list = VRcommand["transcription"]
@@ -87,7 +90,7 @@ def main():
                 print("command = %s" % command)
                 tello.send_command(command)
                 break
-            if(command != "land"):
+            if(command != "land" and command != ""):
                 print("command = %s" % command)
                 tello.send_command(command)
             else:
@@ -125,11 +128,11 @@ def recognize_speech_from_mic(recognizer, microphone):
         recognized = None
 
         '''LISTINING'''
-        try:
-            audio = recognizer.listen(source, timeout = 5)
-        except sr.WaitTimeoutError:
-            print("Timeout...")
-            return
+        #try:
+        #    audio = recognizer.listen(source, timeout = 5)
+        #except sr.WaitTimeoutError:
+        #    print("Timeout...")
+        #    return
         
         # set up the response object
         response = {
@@ -140,11 +143,15 @@ def recognize_speech_from_mic(recognizer, microphone):
 
         # RECOGNIZING
         try:
+            audio = recognizer.listen(source, timeout = 5)
             recognized = recognizer.recognize_google(audio, key=None, language='ja')
             print("You said: " + recognized)
             # WAKATI
             t = Tokenizer(wakati=True)
             response["transcription"] = t.tokenize(recognized)
+        except sr.WaitTimeoutError:
+            response["success"] = False
+            response["error"] = "Timeout..."
         except sr.RequestError:
             # API was unreachable or unresponsive
             response["success"] = False
