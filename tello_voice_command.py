@@ -21,10 +21,11 @@ def main():
         while True:
             print("START RECOGNIZING!")
             VRcommand = recognize_speech_from_mic(recognizer, microphone)
-            print(VRcommand["transcription"])
+            # print(VRcommand["transcription"])
             print("API returns: {}".format(VRcommand["error"]))
             if(VRcommand["transcription"] == None):
                 VRcommand["transcription"] = ["着陸"] # If not recognized, land your Drone
+                # print(VRcommand["transcription"])
 
             i = 0
             com_list = VRcommand["transcription"]
@@ -88,10 +89,12 @@ def main():
                     i=i+1
 
             if(cmd == "land"):
-                print("command = %s" % command)
+                print("command = %s" % cmd)
                 tello.send_command(cmd)
                 break
-            if(cmd != "land" and cmd != ""):
+            if(cmd == ""):
+                print("command not recognized")
+            elif(cmd != "land"):
                 print("command = %s" % cmd)
                 tello.send_command(cmd)
             elif(flying == 0):
@@ -125,18 +128,11 @@ def recognize_speech_from_mic(recognizer, microphone):
     # adjust the recognizer sensitivity to ambient noise and record audio
     # from the microphone
     with microphone as source:
-        recognizer.pause_threshold = 0.5
+        recognizer.pause_threshold = 0.8
         recognizer.dynamic_energy_threshold = False
         recognizer.adjust_for_ambient_noise(source)
         recognized = None
 
-        '''LISTINING'''
-        #try:
-        #    audio = recognizer.listen(source, timeout = 5)
-        #except sr.WaitTimeoutError:
-        #    print("Timeout...")
-        #    return
-        
         # set up the response object
         response = {
             "success": True,
@@ -144,17 +140,26 @@ def recognize_speech_from_mic(recognizer, microphone):
             "transcription": None
         }
 
+        # LISTINING
+        try:
+            audio = recognizer.listen(source, timeout = 5)
+        except sr.WaitTimeoutError:
+            response["success"] = False
+            response["error"] = "Timeout..."
+            response["transcription"] = None
+        #    print("Timeout...")
+            return response
+        
         # RECOGNIZING
         try:
-            audio = recognizer.listen(source, timeout = 3)
             recognized = recognizer.recognize_google(audio, key=None, language='ja')
             print("You said: " + recognized)
             # WAKATI
             t = Tokenizer(wakati=True)
             response["transcription"] = t.tokenize(recognized)
-        except sr.WaitTimeoutError:
-            response["success"] = False
-            response["error"] = "Timeout..."
+        # except sr.WaitTimeoutError:
+        #     response["success"] = False
+        #     response["error"] = "Timeout..."
         except sr.RequestError:
             # API was unreachable or unresponsive
             response["success"] = False
