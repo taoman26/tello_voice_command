@@ -26,8 +26,7 @@ python3 ./tello_voice_command.py
 
 ## 実行環境
 
-python 3.6以降で動作確認済み
-pythonには、以下ライブラリが必要です。
+python 3.6以降で動作確認済みですが、以下ライブラリが必要です。
 - pynput
 - speech_recognition
 - janome
